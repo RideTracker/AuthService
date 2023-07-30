@@ -39,9 +39,9 @@ export function withAuth(type: TokenType | TokenType[], databaseBinding: string)
                 if((typeof(type) === "string" && token.type !== type) || !(type.includes(token.type)))
                     return Response.json({ success: false }, { status: 401, statusText: "Unauthorized" });
         
-                if((token.type === "user" && token.email !== identity) || (token.type === "service" && token.user !== identity))
+                if((token.type === "user" && token.email !== identity) || (token.type === "device" && token.email !== identity) || (token.type === "service" && token.user !== identity))
                     return Response.json({ success: false }, { status: 401, statusText: "Unauthorized" });
-                    
+
                 request.key = {
                     id: token.id,
                     key: token.key,
