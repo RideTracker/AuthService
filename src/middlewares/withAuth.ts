@@ -1,10 +1,9 @@
 import { getTokenByKey } from "../controllers/tokens/getTokenByKey";
+import { DatabaseSource } from "../database/databaseSource";
 import { TokenType } from "../models/TokenType";
 
-export function withAuth(type: TokenType | TokenType[], databaseBinding: string) {
+export function withAuth(type: TokenType | TokenType[], databaseSource: DatabaseSource) {
     return async (request: RequestWithKey, env: any, context: any) => {
-        const database = env[databaseBinding];
-
         const authorizationHeader = request.headers.get("Authorization");
         
         if(!authorizationHeader)
@@ -28,7 +27,7 @@ export function withAuth(type: TokenType | TokenType[], databaseBinding: string)
                 const identity = authorizationToken[0];
                 const key = authorizationToken[1];
 
-                const token = await getTokenByKey(database, key);
+                const token = await getTokenByKey(databaseSource, key);
 
                 if(token === null)
                     return Response.json({ success: false }, { status: 401, statusText: "Unauthorized" });
