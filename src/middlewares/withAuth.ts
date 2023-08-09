@@ -2,8 +2,8 @@ import { getTokenByKey } from "../controllers/tokens/getTokenByKey";
 import { DatabaseSource } from "../database/databaseSource";
 import { TokenType } from "../models/TokenType";
 
-export function withAuth(type: TokenType | TokenType[], databaseSource: DatabaseSource) {
-    return async (request: RequestWithKey, env: any, context: any) => {
+export function withAuth(type: TokenType | TokenType[]) {
+    return async (request: RequestWithKey, env: any, context: ExecutionContext, databaseSource: DatabaseSource) => {
         const authorizationHeader = request.headers.get("Authorization");
         
         if(!authorizationHeader)

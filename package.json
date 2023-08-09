@@ -1,6 +1,6 @@
 {
   "name": "@ridetracker/authservice",
-  "version": "0.9.6",
+  "version": "0.9.7",
   "main": "src/index.ts",
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20230518.0",
