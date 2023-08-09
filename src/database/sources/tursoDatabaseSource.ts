@@ -5,17 +5,19 @@ import { DatabaseValue } from "../databaseValue";
 import { TursoDatabasePreparedStatement } from "../statements/tursoDatabasePreparedStatement";
 
 export class TursoDatabaseSource implements DatabaseSource {
-    private readonly client: Client;
+    private static client: Client;
 
     constructor(tursoUrl: string, tursoToken: string) {
-        this.client = createClient({
-            url: tursoUrl.replace("libsql://", "wss://"),
-            authToken: tursoToken
-        });
+        if(!TursoDatabaseSource.client || TursoDatabaseSource.client.closed) {
+            TursoDatabaseSource.client = createClient({
+                url: tursoUrl.replace("libsql://", "wss://"),
+                authToken: tursoToken
+            });
+        }
     };
 
     async batch<T>(preparations: TursoDatabasePreparedStatement[]): Promise<T[][]> {
-        const results = await this.client.batch(preparations.map((preparedStatement) => preparedStatement.tursoPreparedStatement));
+        const results = await TursoDatabaseSource.client.batch(preparations.map((preparedStatement) => preparedStatement.tursoPreparedStatement));
 
         return results.map((result) => {
             return result.rows as T[];
@@ -23,7 +25,7 @@ export class TursoDatabaseSource implements DatabaseSource {
     };
     
     prepare(statement: string, ...args: DatabaseValue[]): DatabasePreparedStatement {
-        return new TursoDatabasePreparedStatement(this.client, {
+        return new TursoDatabasePreparedStatement(TursoDatabaseSource.client, {
             sql: statement,
             args: args
         });
